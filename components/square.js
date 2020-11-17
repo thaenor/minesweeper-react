@@ -1,3 +1,4 @@
+import React from 'react';
 import { createComponent } from 'cf-style-container';
 
 const Square = createComponent(

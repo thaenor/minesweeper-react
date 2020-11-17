@@ -11,10 +11,13 @@ export function is_right_edge(pos) {
 export function are_all_tiles_revealed(board) {
   let filled_tiles = board.filter(tile => tile.revealed == true || tile.type === 'bomb');
 
-  return (filled_tiles == size*size);
+  return (filled_tiles.length === size*size);
 }
 
 export function reveal_all_tiles(board) {
   let all_tiles = [...board];
-  return all_tiles.map( til => til.revealed = true);
+  return all_tiles.map( til => {
+    til.revealed = true;
+    return til;
+  });
 }

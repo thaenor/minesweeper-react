@@ -3,6 +3,7 @@ import { is_left_edge, is_right_edge } from '../data/utils';
 
 async function check_tile(tile, board) {
   if (tile.type === 'empty' && tile.warning === 0 && tile.revealed === false) {
+    tile.revealed = true;
     reveal_adjacent_tiles(board, tile);
   }
   tile.revealed = true;

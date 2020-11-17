@@ -31,6 +31,9 @@ const Index = () => {
     if (tile.revealed) {
       return;
     }
+    if (state.is_game_over === false && are_all_tiles_revealed(state.board)) {
+      alert('congratulations, you win!');
+    }
 
     switch (tile.type) {
       case 'empty':
@@ -40,9 +43,10 @@ const Index = () => {
         }
         break;
       case 'bomb':
-        set_state({ ...state, is_game_over: true });
-        alert('BOOM! Game Over!');
+        tile.revealed = true;
+        set_state({ ...state, board: curr_board, is_game_over: true });
         reveal_all_tiles(state.board);
+        alert('BOOM! Game Over!');
         break;
       default:
         console.warn('this should never happen');
@@ -50,25 +54,32 @@ const Index = () => {
         break;
     }
 
+    /**
+     * The issue here is that set_state isn't always triggered
+     * because we are mutating the board and react may or may not
+     * detect the changes. This causes a visual bug where the player
+     * may not see tiles he was suposed to see, but they are correct
+     * within the state.
+     * One fix for this issue would be to deeply copy the board
+     * thus forcing the component to re-render
+     */
     const new_board = [...curr_board];
     set_state({ ...state, board: new_board });
-    
-    if (are_all_tiles_revealed(state.board)) {
-      alert('congratulations, you win!');
-    }
   }
 
   function plant_flag(e, tile) {
-    e.preventDefault();
-    let new_tile = { ...tile, flag: !tile.flag };
-    let new_board = [...state.board];
-    new_board[new_tile.pos] = new_tile;
-    set_state({ ...state, board: new_board });
+    if (tile.revealed === false) {
+      e.preventDefault();
+      let new_tile = { ...tile, flag: !tile.flag };
+      let new_board = [...state.board];
+      new_board[new_tile.pos] = new_tile;
+      set_state({ ...state, board: new_board });
+    }
   }
 
   function renderTile(tile) {
     if (tile.flag) return <Flag />;
-    if (tile.type === 'bomb') return <Mine />;
+    if (tile.type === 'bomb' && tile.revealed === true) return <Mine />;
     if (tile.revealed) return tile.warning;
   }
 
@@ -78,6 +89,7 @@ const Index = () => {
         {state.board.map((tile, i) => (
           <Square
             key={i}
+            disabled={tile.revealed}
             onClick={e => select_square(tile, state.board)}
             onContextMenu={e => plant_flag(e, tile)}
           >

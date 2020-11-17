@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Mine = () => (
   <svg x="0px" y="0px" viewBox="0 0 100 100">
     <path

@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Flag = () => (
   <svg x="0px" y="0px" viewBox="0 0 48 60">
     <g>
